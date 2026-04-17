@@ -3,7 +3,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.helpers.entity import DeviceInfo
 
 
-from .const import DOMAIN
+from .const import DOMAIN, CONF_API_URL
 
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
@@ -19,7 +19,7 @@ class CollectionSensor(CoordinatorEntity, SensorEntity):
         super().__init__(coordinator)
         self._key = key
         self._attr_name = name
-        self._attr_unique_id = key
+        self._attr_unique_id = f"{self._key}_{self.coordinator.config_entry.entry_id}"
         self._attr_icon = icon
 
     @property
@@ -31,8 +31,8 @@ class CollectionSensor(CoordinatorEntity, SensorEntity):
         return DeviceInfo(
             identifiers={(DOMAIN, self.coordinator.config_entry.entry_id)},
             model="Waste Collection API",
-            configuration_url="https://api.0x01.host/bernabfall",
-            name="Bern Waste Collection",
+            configuration_url=self.coordinator.config_entry.data.get(CONF_API_URL),
+            name=f"Bern Waste Collection ({self.coordinator.config_entry.data.get(CONF_API_URL)})",
             manufacturer="Custom",
         )
 
@@ -44,5 +44,5 @@ class CollectionSensor(CoordinatorEntity, SensorEntity):
         if self._key in data:
             holiday_info = data.get(f"{self._key}_holiday", {})
             # holiday_info could be like: {"isPublicHoliday": True, "holidayName": "Easter"}
-            return holiday_info
+            return holiday_info or {}
         return {}
