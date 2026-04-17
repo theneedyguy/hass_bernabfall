@@ -1,14 +1,12 @@
-from aiohttp import ClientSession
-
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
 from .const import DOMAIN
 from .coordinator import CollectionCoordinator
-
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
-    session = hass.helpers.aiohttp_client.async_get_clientsession()
+    session = async_get_clientsession(hass)
 
     coordinator = CollectionCoordinator(hass, session, entry)
     await coordinator.async_config_entry_first_refresh()
