@@ -50,7 +50,15 @@ class CollectionCoordinator(DataUpdateCoordinator):
 
                 return {
                     "household": parse_pickup_date(household_date_str),
-                    "greenwaste": parse_pickup_date(greenwaste_date_str)
+                    "household_holiday": {
+                        "isPublicHoliday": data["householdWaste"][0]["isPublicHoliday"],
+                        "holidayName": data["householdWaste"][0]["holidayName"],
+                    },
+                    "greenwaste": parse_pickup_date(greenwaste_date_str),
+                    "greenwaste_holiday": {
+                        "isPublicHoliday": data["greenWaste"][0]["isPublicHoliday"],
+                        "holidayName": data["greenWaste"][0]["holidayName"],
+                    },
                 }
 
         except ClientError as err:

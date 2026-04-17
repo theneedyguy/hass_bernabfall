@@ -35,3 +35,14 @@ class CollectionSensor(CoordinatorEntity, SensorEntity):
             name="Bern Waste Collection",
             manufacturer="Custom",
         )
+
+    @property
+    def extra_state_attributes(self):
+        """Return additional attributes for the sensor."""
+        data = self.coordinator.data
+        # Look for a corresponding holiday flag/name
+        if self._key in data:
+            holiday_info = data.get(f"{self._key}_holiday", {})
+            # holiday_info could be like: {"isPublicHoliday": True, "holidayName": "Easter"}
+            return holiday_info
+        return {}
