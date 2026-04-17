@@ -5,7 +5,7 @@ from aiohttp import ClientError
 
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .const import CONF_API_URL, CONF_UPDATE_INTERVAL
+from .const import CONF_UPDATE_INTERVAL, BASE_URL
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -29,7 +29,7 @@ def parse_pickup_date(date_str: str) -> datetime:
 
 class CollectionCoordinator(DataUpdateCoordinator):
     def __init__(self, hass, session, config_entry):
-        self.api_url = config_entry.data[CONF_API_URL]
+        self.api_url = BASE_URL
         update_interval = config_entry.data[CONF_UPDATE_INTERVAL]
 
         super().__init__(

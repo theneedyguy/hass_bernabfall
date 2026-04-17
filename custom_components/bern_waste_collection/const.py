@@ -1,6 +1,8 @@
 DOMAIN = "bern_waste_collection"
 
-CONF_API_URL = "api_url"
+BASE_URL = "https://api.0x01.host/bernabfall"
+STREET_NAME = "Seidenweg"
+STREET_NUMBER = 17
 CONF_UPDATE_INTERVAL = "update_interval"
 
 DEFAULT_UPDATE_INTERVAL = 300
