@@ -3,7 +3,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.helpers.entity import DeviceInfo
 
 
-from .const import DOMAIN, CONF_API_URL, STREET
+from .const import DOMAIN, STREET, BASE_URL
 
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
@@ -32,7 +32,7 @@ class CollectionSensor(CoordinatorEntity, SensorEntity):
         return DeviceInfo(
             identifiers={(DOMAIN, self.coordinator.config_entry.entry_id)},
             model="Waste Collection API",
-            configuration_url=self.coordinator.config_entry.data.get(CONF_API_URL),
+            configuration_url=BASE_URL,
             name=f"Bern Waste Collection ({self.coordinator.config_entry.data.get(STREET)})",
             manufacturer="Custom",
         )
