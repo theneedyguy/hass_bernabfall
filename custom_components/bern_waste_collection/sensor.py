@@ -1,4 +1,4 @@
-from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.sensor import SensorEntity, SensorDeviceClass
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.helpers.entity import DeviceInfo
 
@@ -20,13 +20,15 @@ class CollectionSensor(CoordinatorEntity, SensorEntity):
         super().__init__(coordinator)
         self._key = key
         self._attr_name = name
+        self._attr_device_class = SensorDeviceClass.DATE
         self._attr_has_entity_name = True
         self._attr_unique_id = f"{self._key}_{self.coordinator.config_entry.entry_id}"
         self._attr_icon = icon
 
     @property
     def native_value(self):
-        return self.coordinator.data.get(self._key)
+        value = self.coordinator.data.get(self._key)
+        return value.date() if value else None
 
     @property
     def device_info(self):
