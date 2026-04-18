@@ -11,6 +11,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     async_add_entities([
         CollectionSensor(coordinator, "household", "Household Collection Date", "mdi:trash-can"),
         CollectionSensor(coordinator, "greenwaste", "Greenwaste Collection Date", "mdi:leaf"),
+        CollectionSensor(coordinator, "paper", "Paper Collection Date", "mdi:newspaper"),
     ])
 
 

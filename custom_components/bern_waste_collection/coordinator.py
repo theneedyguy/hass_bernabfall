@@ -13,6 +13,26 @@ _LOGGER = logging.getLogger(__name__)
 def parse_pickup_date(date_str: str) -> datetime:
     return datetime.strptime(date_str, "%d.%m.%Y")
 
+
+def get_next_pickup(entries):
+    """Return next upcoming pickup entry."""
+    today = datetime.now().date()
+
+    future_entries = []
+
+    for entry in entries:
+        dt = datetime.strptime(entry["date"], "%d.%m.%Y").date()
+        if dt >= today:
+            future_entries.append((dt, entry))
+
+    if not future_entries:
+        return None  # or handle next year if needed
+
+    # Sort by date and return the soonest one
+    future_entries.sort(key=lambda x: x[0])
+    return future_entries[0][1]
+
+
 class CollectionCoordinator(DataUpdateCoordinator):
     def __init__(self, hass, session, config_entry):
         self.api_url = BASE_URL
@@ -32,20 +52,28 @@ class CollectionCoordinator(DataUpdateCoordinator):
             async with self.session.get(self.api_url, params={"address": self.street_addr}) as response:
                 data = await response.json()
 
-                household_date_str = data["householdWaste"][0]["date"]
-                greenwaste_date_str = data["greenWaste"][0]["date"]
+                household_entry = get_next_pickup(data["householdWaste"])
+                greenwaste_entry = get_next_pickup(data["greenWaste"])
+                paper_entry = get_next_pickup(data["paperCollection"])
 
                 return {
-                    "household": parse_pickup_date(household_date_str),
+                    "household": parse_pickup_date(household_entry["date"]) if household_entry else None,
                     "household_holiday": {
-                        "isPublicHoliday": data["householdWaste"][0]["isPublicHoliday"],
-                        "holidayName": data["householdWaste"][0]["holidayName"],
-                    },
-                    "greenwaste": parse_pickup_date(greenwaste_date_str),
+                        "isPublicHoliday": household_entry["isPublicHoliday"],
+                        "holidayName": household_entry["holidayName"],
+                    } if household_entry else {},
+
+                    "greenwaste": parse_pickup_date(greenwaste_entry["date"]) if greenwaste_entry else None,
                     "greenwaste_holiday": {
-                        "isPublicHoliday": data["greenWaste"][0]["isPublicHoliday"],
-                        "holidayName": data["greenWaste"][0]["holidayName"],
-                    },
+                        "isPublicHoliday": greenwaste_entry["isPublicHoliday"],
+                        "holidayName": greenwaste_entry["holidayName"],
+                    } if greenwaste_entry else {},
+
+                    "paper": parse_pickup_date(paper_entry["date"]) if paper_entry else None,
+                    "paper_holiday": {
+                        "isPublicHoliday": paper_entry["isPublicHoliday"],
+                        "holidayName": paper_entry["holidayName"],
+                    } if paper_entry else {},
                 }
 
         except ClientError as err:
