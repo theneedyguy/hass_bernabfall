@@ -2,7 +2,7 @@ import voluptuous as vol
 
 from homeassistant import config_entries
 
-from .const import DOMAIN, CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL
+from .const import DOMAIN, CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL, STREET
 
 
 class BernWasteConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -19,7 +19,7 @@ class BernWasteConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         schema = vol.Schema(
             {
-                vol.Required(CONF_API_URL): str,
+                vol.Required(STREET): str,
                 vol.Optional(
                     CONF_UPDATE_INTERVAL,
                     default=DEFAULT_UPDATE_INTERVAL,

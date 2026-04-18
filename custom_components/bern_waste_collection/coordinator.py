@@ -5,7 +5,7 @@ from aiohttp import ClientError
 
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .const import CONF_UPDATE_INTERVAL, BASE_URL
+from .const import CONF_UPDATE_INTERVAL, BASE_URL, STREET
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -30,6 +30,7 @@ def parse_pickup_date(date_str: str) -> datetime:
 class CollectionCoordinator(DataUpdateCoordinator):
     def __init__(self, hass, session, config_entry):
         self.api_url = BASE_URL
+        self.street_addr = config_entry.data[STREET]
         update_interval = config_entry.data[CONF_UPDATE_INTERVAL]
 
         super().__init__(
@@ -42,7 +43,7 @@ class CollectionCoordinator(DataUpdateCoordinator):
 
     async def _async_update_data(self):
         try:
-            async with self.session.get(self.api_url) as response:
+            async with self.session.get(self.api_url, params={"address": self.street_addr}) as response:
                 data = await response.json()
 
                 household_date_str = data["householdWaste"][0]["date"]
