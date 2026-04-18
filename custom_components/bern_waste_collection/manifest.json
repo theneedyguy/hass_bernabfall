@@ -1,7 +1,7 @@
 {
   "domain": "bern_waste_collection",
   "name": "Bern Waste Collection",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "config_flow": true,
   "requirements": [],
   "dependencies": [],
